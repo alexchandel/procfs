@@ -43,7 +43,7 @@ CreateScreenGLContext(CGDirectDisplayID targetDisplay)
     };
 
     CGLContextObj context = NULL;
-  
+
     /* Build a full-screen GL context */
 
     CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
@@ -73,7 +73,7 @@ CaptureScreenRectToBuffer(CGRect srcRect, vImage_Buffer *buffer)
     glPixelStorei(GL_PACK_ROW_LENGTH, buffer->rowBytes / 4);
     glPixelStorei(GL_PACK_SKIP_ROWS, 0);
     glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-  
+
 #if __BIG_ENDIAN__
     GLenum pixelDataType = GL_UNSIGNED_INT_8_8_8_8_REV;
 #else
@@ -88,7 +88,7 @@ CaptureScreenRectToBuffer(CGRect srcRect, vImage_Buffer *buffer)
     glReadPixels((GLint)srcRect.origin.x, (GLint)srcRect.origin.y,
                  (GLint)srcRect.size.width, (GLint)srcRect.size.height,
                  GL_BGRA, pixelDataType, buffer->data);
-  
+
     /*
      * Vertically reflect in place (OpenGL uses inverted coordinate space,
      * so the image is upside down in memory with respect to what we want.
@@ -109,7 +109,7 @@ CreateFullScreenXRGB32(CGDirectDisplayID targetDisplay,
     glReadBuffer(GL_FRONT);
     glGetIntegerv(GL_VIEWPORT, viewport);
     glFinish();
-  
+
     *width = viewport[2];
     *height = viewport[3];
     *rowBytes = (((*width) * 4) + 3) & ~3;
@@ -119,23 +119,23 @@ CreateFullScreenXRGB32(CGDirectDisplayID targetDisplay,
     if (!raster) {
         goto out;
     }
-  
+
     vImage_Buffer buffer;
     buffer.data = raster;
     buffer.height = *height;
     buffer.width = *width;
     buffer.rowBytes = *rowBytes;
-  
+
     CaptureScreenRectToBuffer(CGRectMake(0, 0, *width, *height), &buffer);
 
 out:
     ReleaseScreenGLContext(context);
-  
+
     return raster;
 }
 
 static CFMutableDataRef
-CreatePNGDataFromXRGB32Raster(void *raster, int width, int height, 
+CreatePNGDataFromXRGB32Raster(void *raster, int width, int height,
                                int bytesPerRow)
 {
     CGColorSpaceRef colorSpace;
@@ -151,24 +151,24 @@ CreatePNGDataFromXRGB32Raster(void *raster, int width, int height,
         image = CGBitmapContextCreateImage(context);
         CGContextRelease(context);
     }
-  
+
     if (!image) {
         return NULL;
     }
-  
+
     CFMutableDataRef data = CFDataCreateMutable(kCFAllocatorDefault, 0);
-    CGImageDestinationRef dest = 
+    CGImageDestinationRef dest =
         CGImageDestinationCreateWithData((CFMutableDataRef)data, kUTTypePNG,
                                          1, nil);
-  
+
     if (dest) {
         CGImageDestinationAddImage(dest, image, nil);
         CGImageDestinationFinalize(dest);
         CFRelease(dest);
     }
-  
+
     CGImageRelease(image);
-  
+
     return data;
 }
 

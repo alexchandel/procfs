@@ -117,7 +117,7 @@ static void fini_task_list(task_array_t           task_list,
     for (i = 0; i < task_count; i++) {
         mach_port_deallocate(mach_task_self(), task_list[i]);
     }
-    vm_deallocate(mach_task_self(), (vm_address_t)task_list,
+    vm_deallocate(mach_task_self(), (mach_vm_address_t)task_list,
                   task_count * sizeof(task_t));
 }
 
@@ -159,7 +159,7 @@ static void fini_port_list(mach_port_name_array_t name_list,
     vm_deallocate(mach_task_self(), (vm_address_t)type_list,
                   type_count * sizeof(mach_port_type_t));
 }
-                           
+
 
 #define DECL_PORT_LIST() \
     mach_port_name_array_t name_list;  \
@@ -842,8 +842,8 @@ procfs_file_table[] = {
     DECL_FILE(
         "/(\\d+)/windows/screenshots/([a-f\\d]+).png",
         2,
-        proc__windows__screenshots__window, 
-        proc__windows__screenshots__window, 
+        proc__windows__screenshots__window,
+        proc__windows__screenshots__window,
         proc__windows__screenshots__window,
         proc__windows__screenshots__window
     )
@@ -1393,7 +1393,7 @@ RELEASE_HANDLER(proc__windows__identify)
 }
 
 RELEASE_HANDLER(proc__windows__screenshots__window)
-{ 
+{
     if (fi->fh) {
         struct ProcfsWindowData *pwd = (struct ProcfsWindowData *)(fi->fh);
         CFRelease((CFMutableDataRef)(pwd->window_png));
@@ -1446,13 +1446,13 @@ RELEASEDIR_HANDLER(enotdir)
 //  procfs_getattr_<handler>(procfs_dispatcher_entry_t  e,
 //                           const char                *argv[],
 //                           struct stat               *stbuf)
-                          
+
 
 GETATTR_HANDLER(default_file)
-{                         
+{
     time_t current_time = time(NULL);
-    stbuf->st_mode = S_IFREG | 0444;             
-    stbuf->st_nlink = 1;  
+    stbuf->st_mode = S_IFREG | 0444;
+    stbuf->st_nlink = 1;
     stbuf->st_size = 0;
     if (procfs_ui) {
         stbuf->st_size = PROCFS_DEFAULT_FILE_SIZE;
@@ -1460,7 +1460,7 @@ GETATTR_HANDLER(default_file)
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
 
     return 0;
-}   
+}
 
 GETATTR_HANDLER(default_file_finder_info)
 {
@@ -1469,14 +1469,14 @@ GETATTR_HANDLER(default_file_finder_info)
     }
 
     time_t current_time = time(NULL);
-    stbuf->st_mode = S_IFREG | 0444;             
-    stbuf->st_nlink = 1;  
+    stbuf->st_mode = S_IFREG | 0444;
+    stbuf->st_nlink = 1;
     stbuf->st_size = 82;
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
 
     return 0;
 }
-    
+
 GETATTR_HANDLER(default_directory)
 {
     time_t current_time = time(NULL);
@@ -1485,7 +1485,7 @@ GETATTR_HANDLER(default_directory)
     stbuf->st_nlink = 1;
     stbuf->st_size = 0;
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
-    
+
     return 0;
 }
 
@@ -1494,7 +1494,7 @@ GETATTR_HANDLER(default_link)
     stbuf->st_mode = S_IFLNK | 0755;
     stbuf->st_nlink = 1;
     stbuf->st_size = 0;
-    
+
     return 0;
 }
 
@@ -1502,7 +1502,7 @@ GETATTR_HANDLER(byname__name)
 {
     const char *target_Pname = argv[0];
     struct stat the_stat;
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     Boolean strstatus = false;
 
     ProcessSerialNumber psn;
@@ -1574,7 +1574,7 @@ GETATTR_HANDLER(system__hardware__displays__display)
     stbuf->st_nlink = 1;
     stbuf->st_size = 0;
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
-    
+
     return 0;
 }
 
@@ -1651,7 +1651,7 @@ GETATTR_HANDLER(system__hardware__tpm__pcrs__pcr)
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
 
     return 0;
-}  
+}
 #endif /* OSXFUSE_PROCFS_ENABLE_TPM */
 
 GETATTR_HANDLER(proc__task__ports__port)
@@ -1695,7 +1695,7 @@ GETATTR_HANDLER(proc__task__ports__port)
     stbuf->st_nlink = 1;
     stbuf->st_size = 0;
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
-    
+
     return 0;
 }
 
@@ -1729,7 +1729,7 @@ GETATTR_HANDLER(proc__task__threads__thread)
     stbuf->st_nlink = 1;
     stbuf->st_size = 0;
     stbuf->st_atime = stbuf->st_ctime = stbuf->st_mtime = current_time;
-    
+
     return 0;
 }
 
@@ -1871,7 +1871,7 @@ getproccmdline(pid_t pid, char *cmdlinebuf, int len)
             break;
         }
         thislen = snprintf(cmdlinebuf + tlen, rlen, "%s ", cp);
-        tlen += thislen; 
+        tlen += thislen;
         rlen -= thislen;
         if (rlen <= 0) {
             break;
@@ -1934,7 +1934,7 @@ READ_HANDLER(default_file_finder_info)
         if (offset + size > len)
             size = len - offset;
         memcpy(buf, tmpbuf + offset, size);
-    } else             
+    } else
         size = 0;
 
     return size;
@@ -1962,7 +1962,7 @@ READ_HANDLER(system__firmware__variables)
 
             {
                 const UInt8 *tmpbuf = CFDataGetBytePtr(xml);
-   
+
                 if (offset < len) {
                     if (offset + size > len)
                         size = len - offset;
@@ -1976,7 +1976,7 @@ done:
         }
         IOObjectRelease(options);
     }
-   
+
     if (kr != KERN_SUCCESS) {
         return -EIO;
     }
@@ -2042,14 +2042,14 @@ READ_HANDLER(system__hardware__cpus__cpu__data)
     if (len < 0) {
         return -EIO;
     }
-    
+
     if (offset < len) {
         if (offset + size > len)
             size = len - offset;
         memcpy(buf, tmpbuf + offset, size);
-    } else             
+    } else
         size = 0;
-    
+
     return size;
 }
 
@@ -2073,7 +2073,7 @@ READ_HANDLER(system__hardware__displays__display__info)
         if (offset + size > len)
             size = len - offset;
         memcpy(buf, tmpbuf + offset, size);
-    } else           
+    } else
         size = 0;
 
     return size;
@@ -2091,9 +2091,9 @@ READ_HANDLER(system__hardware__camera__screenshot)
     CFDataSetLength(camera_tiff, max_len);
 
     const UInt8 *tmpbuf = CFDataGetBytePtr(camera_tiff);
-        
+
     if (len < 0) {
-        return -EIO; 
+        return -EIO;
     }
 
     if (offset < len) {
@@ -2192,10 +2192,10 @@ READ_HANDLER(system__hardware__xsensor)
             len = snprintf(tmpbuf, 4096, "not available\n");
             goto gotdata;
         }
-        kr = IOConnectCallScalarMethod(lightsensor_port, gIndex, NULL, 0, 
+        kr = IOConnectCallScalarMethod(lightsensor_port, gIndex, NULL, 0,
                                        scalarOutputValues, &scalarOutputCount);
         if (kr == KERN_SUCCESS) {
-            len = snprintf(tmpbuf, 4096, "%llu %llu\n", 
+            len = snprintf(tmpbuf, 4096, "%llu %llu\n",
                            scalarOutputValues[0], scalarOutputValues[1]);
         } else if (kr == kIOReturnBusy) {
             len = snprintf(tmpbuf, 4096, "busy\n");
@@ -2235,14 +2235,14 @@ gotdata:
     if (len < 0) {
         return -EIO;
     }
-    
+
     if (offset < len) {
         if (offset + size > len)
             size = len - offset;
         memcpy(buf, tmpbuf + offset, size);
-    } else             
+    } else
         size = 0;
-    
+
     return size;
 }
 
@@ -2442,8 +2442,8 @@ gotdata:
 
     if (len < 0) {
         return -EIO;
-    }   
-        
+    }
+
     if (offset < len) {
         if (offset + size > len)
             size = len - offset;
@@ -2482,7 +2482,7 @@ READ_HANDLER(proc__fds)
     if (strcmp(whichfile, item) == 0) {             \
         len = snprintf(tmpbuf, 4096, fmt, datasrc); \
         goto gotdata;                               \
-    }   
+    }
 
 READ_HANDLER(proc__generic)
 {
@@ -2653,7 +2653,7 @@ READ_HANDLER(proc__task__basic_info)
     }
 
     if (strcmp(whichfile, "resident_size") == 0) {
-        len = snprintf(tmpbuf, 4096, "%u KB\n",
+        len = snprintf(tmpbuf, 4096, "%lu KB\n",
                        basic_info->resident_size >> 10);
         goto gotdata;
     }
@@ -2678,7 +2678,7 @@ READ_HANDLER(proc__task__basic_info)
     }
 
     if (strcmp(whichfile, "virtual_size") == 0) {
-        len = snprintf(tmpbuf, 4096, "%u KB\n", basic_info->virtual_size >> 10);
+        len = snprintf(tmpbuf, 4096, "%lu KB\n", basic_info->virtual_size >> 10);
         goto gotdata;
     }
 
@@ -2744,7 +2744,7 @@ READ_HANDLER(proc__task__thread_times_info)
 
     const char *whichfile = argv[1];
     thread_times_info = (task_thread_times_info_t)tinfo;
-    
+
     if (strcmp(whichfile, "system_time") == 0) {
         len = snprintf(tmpbuf, 4096, "%us %uus\n",
                        thread_times_info->system_time.seconds,
@@ -2771,7 +2771,7 @@ READ_HANDLER(proc__task__mach_name)
     READ_PROC_TASK_PROLOGUE();
 
     len = snprintf(tmpbuf, 4096, "%x\n", the_task);
-   
+
     READ_PROC_TASK_EPILOGUE();
 }
 
@@ -2805,22 +2805,22 @@ READ_HANDLER(proc__task__ports__port)
         len = 0;
         if (the_type & MACH_PORT_TYPE_SEND) {
              len += snprintf(tmpbuf + len, 4096 - len, "%s ", "SEND");
-        } 
+        }
         if (the_type & MACH_PORT_TYPE_RECEIVE) {
              len += snprintf(tmpbuf + len, 4096 - len, "%s ", "RECEIVE");
-        } 
+        }
         if (the_type & MACH_PORT_TYPE_SEND_ONCE) {
              len += snprintf(tmpbuf + len, 4096 - len, "%s ", "SEND_ONCE");
-        } 
+        }
         if (the_type & MACH_PORT_TYPE_PORT_SET) {
              len += snprintf(tmpbuf + len, 4096 - len, "%s ", "PORT_SET");
-        } 
+        }
         if (the_type & MACH_PORT_TYPE_DEAD_NAME) {
              len += snprintf(tmpbuf + len, 4096 - len, "%s ", "DEAD_NAME");
-        } 
+        }
         if (the_type & MACH_PORT_TYPE_DNREQUEST) {
              len += snprintf(tmpbuf + len, 4096 - len, "%s ", "DNREQUEST");
-        } 
+        }
         len += snprintf(tmpbuf + len, 4096 - len, "\n");
         goto gotdata;
     }
@@ -2950,12 +2950,12 @@ READ_HANDLER(proc__task__threads__thread__basic_info)
     if (i < thread_count) {
         the_thread = thread_list[i];
     }
-    
+
     if (the_thread == MACH_PORT_NULL) {
         FINI_THREAD_LIST();
         return -ENOENT;
-    }   
-        
+    }
+
     const char *whichfile = argv[2];
 
     thread_info_data_t thinfo;
@@ -3169,7 +3169,7 @@ READ_HANDLER(proc__task__threads__thread__states__float)
         HANDLE_x86_FLOAT_STATE_ITEM_CONTROL_BIT(undfl);
         HANDLE_x86_FLOAT_STATE_ITEM_CONTROL_BIT(precis);
         HANDLE_x86_FLOAT_STATE_ITEM_CONTROL_BIT(pc);
-        switch (state.ufs.fs32.__fpu_fcw.__pc) {    
+        switch (state.ufs.fs32.__fpu_fcw.__pc) {
         case 0:
             len += snprintf(tmpbuf + len, 4096 - len, "(24B) ");
             break;
@@ -3375,11 +3375,11 @@ READ_HANDLER(proc__task__vmmap)
         return -EIO;
     }
 
-    vm_size_t vmsize;
-    vm_address_t address;
+    mach_vm_size_t vmsize;
+    mach_vm_address_t address;
     vm_region_basic_info_data_t info;
     mach_msg_type_number_t info_count;
-    vm_region_flavor_t flavor; 
+    vm_region_flavor_t flavor;
     memory_object_name_t object;
 
     kr = KERN_SUCCESS;
@@ -3389,14 +3389,14 @@ READ_HANDLER(proc__task__vmmap)
     do {
         flavor = VM_REGION_BASIC_INFO;
         info_count = VM_REGION_BASIC_INFO_COUNT;
-        kr = vm_region(the_task, &address, &vmsize, flavor,
+        kr = mach_vm_region(the_task, &address, &vmsize, flavor,
                        (vm_region_info_t)&info, &info_count, &object);
         if (kr == KERN_SUCCESS) {
             if (len >= MAX_VMMAP_SIZE) {
                 goto gotdata;
             }
             len += snprintf(tmpbuf + len, MAX_VMMAP_SIZE - len,
-            "%08x-%08x %8uK %c%c%c/%c%c%c %11s %6s %10s uwir=%hu sub=%u\n",
+            "%08llx-%08llx %8lluK %c%c%c/%c%c%c %11s %6s %10s uwir=%hu sub=%u\n",
                             address, (address + vmsize), (vmsize >> 10),
                             (info.protection & VM_PROT_READ)        ? 'r' : '-',
                             (info.protection & VM_PROT_WRITE)       ? 'w' : '-',
@@ -3433,17 +3433,17 @@ static int
 M_get_vmmap_entries(task_t task)
 {
     kern_return_t kr      = KERN_SUCCESS;
-    vm_address_t  address = 0;
-    vm_size_t     size    = 0;
+    mach_vm_address_t  address = 0;
+    mach_vm_size_t     size    = 0;
     int           n       = 1;
 
     while (1) {
         mach_msg_type_number_t count;
         struct vm_region_submap_info_64 info;
         uint32_t nesting_depth;
-  
+
         count = VM_REGION_SUBMAP_INFO_COUNT_64;
-        kr = vm_region_recurse_64(task, &address, &size, &nesting_depth,
+        kr = mach_vm_region_recurse(task, &address, &size, &nesting_depth,
                                   (vm_region_info_64_t)&info, &count);
         if (kr == KERN_INVALID_ADDRESS) {
             break;
@@ -3471,7 +3471,7 @@ get_user_tag_description(unsigned int user_tag)
     const char *description = "unknown";
 
     switch (user_tag) {
-    
+
     case VM_MEMORY_MALLOC:
         description = "MALLOC";
         break;
@@ -3552,7 +3552,7 @@ get_user_tag_description(unsigned int user_tag)
 }
 
 READ_HANDLER(proc__task__vmmap_r)
-{ 
+{
     int len = -1;
     kern_return_t kr;
     uint32_t nesting_depth = 0;
@@ -3695,7 +3695,7 @@ READ_HANDLER(proc__windows__generic)
     char tmpbuf[MAX_WINDOWDATA];
     int i, len = 0;
 
-    for (i = 0; i < windowCount; i++) { 
+    for (i = 0; i < windowCount; i++) {
 
         if (len > MAX_WINDOWDATA) {
            goto gotdata;
@@ -3729,7 +3729,7 @@ gotdata:
     return size;
 }
 
-READ_HANDLER(proc__windows__screenshots__window) 
+READ_HANDLER(proc__windows__screenshots__window)
 {
     if (fi->fh == 0) {
         return 0;
@@ -3788,7 +3788,7 @@ READ_HANDLER(proc__xcred)
         }
         len += snprintf(tmpbuf + len, 4096 - len, "\n");
         goto gotdata;
-    }   
+    }
 
     if (strcmp(whichfile, "rgid") == 0) {
         g = getgrgid(kp.kp_eproc.e_pcred.p_rgid);
@@ -3826,7 +3826,7 @@ READ_HANDLER(proc__xcred)
     }
 
 gotdata:
-    
+
     if (len < 0) {
         return -EIO;
     }
@@ -3943,7 +3943,7 @@ READDIR_HANDLER(root)
 {
     unsigned int i;
     kern_return_t kr;
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     struct stat dir_stat;
     pid_t pid;
     DECL_TASK_LIST();
@@ -3970,7 +3970,7 @@ READDIR_HANDLER(root)
 READDIR_HANDLER(byname)
 {
     int len;
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     Boolean strstatus = false;
     struct stat the_stat;
 
@@ -4025,7 +4025,7 @@ READDIR_HANDLER(system__hardware__cpus)
 {
     int len;
     unsigned int i;
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     struct stat the_stat;
 
     memset(&the_stat, 0, sizeof(the_stat));
@@ -4086,7 +4086,7 @@ READDIR_HANDLER(system__hardware__tpm__keyslots)
 {
 #if OSXFUSE_PROCFS_ENABLE_TPM
     unsigned int i, len;
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     struct stat the_stat;
     uint32_t keys[256];
 
@@ -4129,7 +4129,7 @@ READDIR_HANDLER(system__hardware__tpm__pcrs)
 #if OSXFUSE_PROCFS_ENABLE_TPM
     unsigned int i, len;
     uint32_t pcrs;
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     struct stat the_stat;
 
     if (TPM_GetCapability_Pcrs(&pcrs)) {
@@ -4292,7 +4292,7 @@ READLINK_HANDLER(einval)
 READLINK_HANDLER(byname__name)
 {
     const char *target_Pname = argv[0];
-    char the_name[MAXNAMLEN + 1];  
+    char the_name[MAXNAMLEN + 1];
     Boolean strstatus = false;
 
     ProcessSerialNumber psn;
@@ -4366,14 +4366,14 @@ procfs_init(struct fuse_conn_info *conn)
 
     kr = processor_set_default(mach_host_self(), &p_default_set);
     EXIT_ON_MACH_ERROR("processor_default", 1);
-   
+
     kr = host_processor_set_priv(mach_host_self(), p_default_set,
                                  &p_default_set_control);
     EXIT_ON_MACH_ERROR("host_processor_set_priv", 1);
 
     kr = host_get_host_priv_port(mach_host_self(), &host_priv);
     EXIT_ON_MACH_ERROR("host_get_host_priv_port", 1);
-   
+
     processor_list = (processor_port_array_t)0;
     kr = host_processors(host_priv, &processor_list, &processor_count);
     EXIT_ON_MACH_ERROR("host_processors", 1);
@@ -4432,7 +4432,7 @@ procfs_init(struct fuse_conn_info *conn)
         sizeof(procfs_directory_table)/sizeof(struct procfs_dispatcher_entry);
     total_link_patterns =
         sizeof(procfs_link_table)/sizeof(struct procfs_dispatcher_entry);
-   
+
     pthread_mutex_init(&camera_lock, NULL);
     pthread_mutex_init(&display_lock, NULL);
 
@@ -4900,15 +4900,15 @@ procfs_read(const char *path, char *buf, size_t size, off_t offset,
                 goto out;
             }
             break;
-    
+
         default:
             return -EIO;
         }
-    }   
+    }
 
     return -EIO;
-    
-out:    
+
+out:
     return e->read(e, real_argv, buf, size, offset, fi);
 }
 

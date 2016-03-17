@@ -16,6 +16,13 @@ int PROCFS_GetInfoForDisplayAtIndex(unsigned int index, char *buf,
 int PROCFS_GetPNGForDisplayAtIndex(unsigned int index, CFMutableDataRef *data);
 off_t PROCFS_GetPNGSizeForDisplayAtIndex(unsigned int index);
 
+/* Declare deprecated functions */
+void * CGDisplayBaseAddress ( CGDirectDisplayID display );
+size_t CGDisplayBitsPerPixel ( CGDirectDisplayID display );
+size_t CGDisplayBitsPerSample ( CGDirectDisplayID display );
+size_t CGDisplaySamplesPerPixel ( CGDirectDisplayID display );
+size_t CGDisplayBytesPerRow ( CGDirectDisplayID display );
+
 } /* extern "C" */
 
 #endif /* _PROCFS_DISPLAYS_H_ */
