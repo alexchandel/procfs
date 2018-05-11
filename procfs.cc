@@ -34,7 +34,8 @@
 #include <IOKit/IOKitLib.h>
 
 #include <cassert>
-#include <vector>
+// #include <vector>
+#include <string>
 #include <pcrecpp.h>
 
 #include <fuse.h>
@@ -4456,7 +4457,7 @@ procfs_destroy(void *arg)
 #define PROCFS_OPEN_RELEASE_COMMON()                                          \
     int i;                                                                    \
     procfs_dispatcher_entry_t e;                                              \
-    string arg1, arg2, arg3;                                                  \
+    std::string arg1, arg2, arg3;                                             \
     const char *real_argv[PROCFS_MAX_ARGS];                                   \
                                                                               \
     if (valid_process_pattern->PartialMatch(path, &arg1)) {                   \
@@ -4586,7 +4587,7 @@ procfs_getattr(const char *path, struct stat *stbuf)
 {
     int i;
     procfs_dispatcher_entry_t e;
-    string arg1, arg2, arg3;
+    std::string arg1, arg2, arg3;
     const char *real_argv[PROCFS_MAX_ARGS];
 
     if (valid_process_pattern->PartialMatch(path, &arg1)) {
@@ -4736,7 +4737,7 @@ procfs_readdir(const char             *path,
 {
     int i;
     procfs_dispatcher_entry_t e;
-    string arg1, arg2, arg3;
+    std::string arg1, arg2, arg3;
     const char *real_argv[PROCFS_MAX_ARGS];
 
     if (valid_process_pattern->PartialMatch(path, &arg1)) {
@@ -4806,7 +4807,7 @@ procfs_readlink(const char *path, char *buf, size_t size)
 {
     int i;
     procfs_dispatcher_entry_t e;
-    string arg1, arg2, arg3;
+    std::string arg1, arg2, arg3;
     const char *real_argv[PROCFS_MAX_ARGS];
 
     for (i = 0; i < PROCFS_MAX_ARGS; i++) {
@@ -4855,7 +4856,7 @@ procfs_read(const char *path, char *buf, size_t size, off_t offset,
 {
     int i;
     procfs_dispatcher_entry_t e;
-    string arg1, arg2, arg3;
+    std::string arg1, arg2, arg3;
     const char *real_argv[PROCFS_MAX_ARGS];
 
     for (i = 0; i < PROCFS_MAX_ARGS; i++) {
